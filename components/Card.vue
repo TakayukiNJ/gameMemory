@@ -1,48 +1,34 @@
 <template>
-<!-- <div >{{name}} -->
-
-<!-- <img :id="`cardId${cardId}`" src="~/assets/cardFront.png" class="card" style="left:100px" @click="clickCard()" /> -->
-
-<img :src="src" class="card" @click="clickCarda()"/>
-<!-- <img src="~/assets/0/[0].png" class="card"/> -->
-    
+  <img :src="src" class="card" @click="clickCarda()" :style="`opacity: ${opa}`"/>
 </template>
 
 <script>
 export default {
-  data(){   
+  data(){
     return{
       src:require("~/assets/cardFront.png"),
     }
   },
-  props:['left','top','cardId','num'],
+  props:['cardId','num','opa','face','src'],
     methods:{
-      clickCarda(eventa){
-        // alert("a"+this.num);
+      clickCarda(){
         this.src = require('~/assets/0/'+this.cardId+'.png');
-        // this.list.push(this.num)
-        this.$emit('click',this.num,this.cardId);//thisでおくる方法ぐぐる
-        // alert(countZ);
-        // console.log(this.cardId);
+        this.$emit('click',this.num,this.cardId, this.opa, this.face, this.src);
+        console.log();
+        // this.opa = 0.5;
       },
-      // clickCardb(eventb){
-      //   alert("b"+this.num);
-      //   // let countZ = this.num;
-      //   this.src = require('~/assets/0/'+this.cardId+'.png');
-      //   this.$emit('click',this.num);//thisでおくる方法ぐぐる
-      //   // alert(countZ);
-      // },
-      
     },
 }
 </script>
 
 <style >
 .card {
-  /* position: absolute; */
+  /* デフォルトの値を宣言*/
+  /* --card-image: url("../../assets/nakajoMemory/cardFront.png");
+  background-image: var(--card-image); */
   width: 100px;
   height: auto;
+  padding: 3.5px;
   /* background: url('~/assets/cardFront.png'); */
 }
-
 </style>

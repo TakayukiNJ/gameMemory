@@ -3,7 +3,10 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-const _50230908 = () => import('../pages/index.vue' /* webpackChunkName: "pages/index" */).then(m => m.default || m)
+const _779ffd07 = () => import('../pages/nakajo/index.vue' /* webpackChunkName: "pages/nakajo/index" */).then(m => m.default || m)
+const _4a44460c = () => import('../pages/memory/index.vue' /* webpackChunkName: "pages/memory/index" */).then(m => m.default || m)
+const _41f54f13 = () => import('../pages/nakajo/ColorPalette.vue' /* webpackChunkName: "pages/nakajo/ColorPalette" */).then(m => m.default || m)
+const _5ff0e20c = () => import('../pages/index.vue' /* webpackChunkName: "pages/index" */).then(m => m.default || m)
 
 
 
@@ -64,8 +67,23 @@ export function createRouter () {
     scrollBehavior,
     routes: [
 		{
+			path: "/nakajo",
+			component: _779ffd07,
+			name: "nakajo"
+		},
+		{
+			path: "/memory",
+			component: _4a44460c,
+			name: "memory"
+		},
+		{
+			path: "/nakajo/ColorPalette",
+			component: _41f54f13,
+			name: "nakajo-ColorPalette"
+		},
+		{
 			path: "/",
-			component: _50230908,
+			component: _5ff0e20c,
 			name: "index"
 		}
     ],

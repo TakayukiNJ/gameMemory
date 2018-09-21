@@ -1,14 +1,12 @@
 <template>
-  <div
-    class="container"
-  >
-  <!-- v-for=”[i. 任意の名前] in [ii. data内の配列の名前]” -->
+  <div class="container">
   <Card v-for="card in cardlist"
         :key="card.id" 
         :cardId="card.id"
-        :left="card.left"
-        :top="card.top"
         :num="card.num"
+        :opa="card.opa"
+        :face="card.face"
+        :src="card.src"
         @click="clickCount"
   />
   </div>
@@ -16,22 +14,22 @@
 
 <script>
 import Card from "~/components/Card";
-// import Omocard from "~/components/OmoCard";
+
 export default {
   components: {
     Card,
   },
   data() {
     return {
-      // cardlist: [{ id: 1, left: 4, top: 2 }, { id: 2, left: 4, top: 2 }]
       cardlist: [{ 
         id: 1,
-        left: 4,
-        top: 2,
         num: 1,
-        }],
-        cCount:0,
-        cardlist1:[],
+        opa: 1,
+        face: true,
+        src: require("~/assets/cardFront.png"),
+      }],
+      cCount:0,
+      cardlist1:[],
     };
     //表だったら、裏だったら、マークの柄の判定、数字の情報を入れる
   },
@@ -43,61 +41,82 @@ export default {
       count++;
       // https://qiita.com/artistan/items/9eb9a0fb14f4ec3a8764
       for (let i = Newcardlist.length-1; i >= 0; i--){
-        // 0~iのランダムな数値を取得
         let rand = Math.floor(Math.random() * (i + 1));
         // 配列の数値を入れ替える
         [Newcardlist[i], Newcardlist[rand]] = [Newcardlist[rand], Newcardlist[i]]
       }
       if (i % 13 == 0) count = 1;//13までいったらカウントを１に戻す。
       // let count = Math.floor(Math.random() * 13)
-      let a = { id: i + 1, left: 3, top: 2, num: count };
-      Newcardlist.push(a);//
-      //  console.log(a);
+      let a = { id: i + 1, num: count, opa:1, face:true, src:require("~/assets/cardFront.png") };
+      Newcardlist.push(a);
     }
-    this.cardlist = Newcardlist;//
+    this.cardlist = Newcardlist;
   },
   methods:{
-    clickCount(num1,cardId){
-      // console.log(cardId);
-       this.cCount++;
-      //  console.log(this.cCount);
-      
-       if(this.cCount % 2 ==0){
-          let cardlist2 =num1;
-        //  let cardList2= num1;
-          console.log("1だよ"+this.cardlist1[0]);
-          console.log("2だよ"+cardlist2);
-          if(cardlist2 == this.cardlist1[0]){
-           alert("正解！");//この２つを消す
-           const Newcardlist = this.cardlist.concat();
-          //  console.log(Newcardlist);
-           const targetIndex = Newcardlist.findIndex(cardlist=>cardlist.id===cardId);
-           console.log(targetIndex);
-           Newcardlist.splice(this.targetIndex,1);
-           this.cardlist = Newcardlist;
-
-          //  this.cardlist1.length=null;
-          //  this.cardlist2.length=null;
-         }else{
-           //この２つを裏に戻す
-           this.cardlist1.length=null;
-          //  cardList2,this.cardList1[0],require("~/assets/cardFront.png");
-         }
-        //  alert(this.cCount+"ぐうすう");
-        //  alert(this.num);
-         //偶数だったら判定して、truuだったら消える、truuじゃなかったら裏に戻す。
-       }
-       else{
-         this.cardlist1.push(num1);
-        //  alert(this.cCount+"きすう");
-       }
+    clickCount(num, cardId, opa, face, src){
+      this.cCount++;
+      console.log(cardId);
+      // 同じカードを引いた時
+      if(this.cardlist1[2] == cardId){
+        return;
+      }
+      // 最初のカードと2枚目のカードで条件分岐
+      if(this.cCount % 2 !== 0){
+        const NewcardlistFirst = this.cardlist.concat();
+        const targetIndex = NewcardlistFirst.findIndex(cardlist => cardlist.id === cardId);
+        this.cardlist1.push(num);         // 1枚目が何番のカードか保存
+        this.cardlist1.push(targetIndex); // 1枚目が何番目にあるか保存
+        this.cardlist1.push(cardId);      // 同じカードを引いた時用
+        this.cardlist1.push(face);        // 1枚目が面にあるか保存
+        this.cardlist1.push(src);        // 1枚目が面にあるか保存
+        this.cardlist1[3] = false;
+        // this.cardlist[cardId].face = false;
+        // console.log(this.cardlist[cardId].face);
+      } else {
+        // console.log(this.cardlist1[3]);
+        let cardlist2 = num;
+        const targetIndex = this.cardlist1[1];
+        const NewcardlistSecond = this.cardlist.concat();
+        const targetIndex2 = NewcardlistSecond.findIndex(cardlist => cardlist.id === cardId);
+        const Newcardlist = this.cardlist.concat();
+        // console.log("1枚目のカードの番号は"+this.cardlist1[0]+"番で、左上から数えて"+targetIndex+"番目");
+        // console.log("2枚目のカードの番号は"+cardlist2+"番で、左上から数えて"+targetIndex2+"番目");
+        // カードが揃った時と揃わなかった時で条件分岐
+        if(cardlist2 == this.cardlist1[0]){
+          // console.log("正解！"+this.cardlist1.length);
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              alert("正解！\n1枚目のカード" + this.cardlist1[0] + "\n2枚目のカード" + cardlist2);
+              Newcardlist[targetIndex].opa = 0;  // 最初のカードを透明に
+              Newcardlist[targetIndex2].opa = 0; // 2枚目のカードを透明に
+            }, 60)
+          })
+          // console.log(Newcardlist);
+          this.cardlist1.length=null; // データを空にする
+        }else{
+          // this.cardlist1[3] = require('~/assets/cardFront.png');
+          // console.log(Newcardlist);
+          const Newcardlist = this.cardlist.concat();
+          console.log(Newcardlist[targetIndex].src);
+          Newcardlist[targetIndex].face = true;  // 最初のカードを透明に
+          Newcardlist[targetIndex2].face = true; // 2枚目のカードを透明に
+          // Newcardlist[targetIndex].src = require('~/assets/cardFront.png');
+          //  cardList2,this.cardList1[0],require("~/assets/cardFront.png");return new Promise((resolve, reject) => {
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              alert("残念！\n1枚目のカード" + this.cardlist1[0] + "\n2枚目のカード" + cardlist2);
+              this.cardlist[cardId].face = false;
+              this.cardlist1.length=null; // データを空にする
+            }, 60)
+          })
+          Newcardlist[targetIndex].opa = 0.5;  // 最初のカードを透明に
+          Newcardlist[targetIndex2].opa = 0.5; // 2枚目のカードを透明に
+          // alert("残念！ 最初のカード" + this.cardlist1[0] + "２枚目のカード" + cardlist2);
+        }
+      }
     }
-    
   },
-  
-
 };
-// console.log(list);
 </script>
 
 <style scoped>
@@ -108,6 +127,9 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: center/cover url("~/assets/haikei.jpg");
+  background: rgb(27, 145, 57);
+  /* padding: 10px; */
+  padding-left: 30px;
+  padding-top: 5px;
 }
 </style>
