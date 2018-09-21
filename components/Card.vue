@@ -9,13 +9,11 @@ export default {
       src:require("~/assets/cardFront.png"),
     }
   },
-  props:['cardId','num','opa','face','src'],
+  props:[ 'cardId','num','opa','face','{src:require("~/assets/cardFront.png")}',],
     methods:{
       clickCarda(){
         this.src = require('~/assets/0/'+this.cardId+'.png');
         this.$emit('click',this.num,this.cardId, this.opa, this.face, this.src);
-        console.log();
-        // this.opa = 0.5;
       },
     },
 }

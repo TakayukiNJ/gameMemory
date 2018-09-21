@@ -46,7 +46,6 @@ export default {
         [Newcardlist[i], Newcardlist[rand]] = [Newcardlist[rand], Newcardlist[i]]
       }
       if (i % 13 == 0) count = 1;//13までいったらカウントを１に戻す。
-      // let count = Math.floor(Math.random() * 13)
       let a = { id: i + 1, num: count, opa:1, face:true, src:require("~/assets/cardFront.png") };
       Newcardlist.push(a);
     }
@@ -54,12 +53,14 @@ export default {
   },
   methods:{
     clickCount(num, cardId, opa, face, src){
-      this.cCount++;
-      console.log(cardId);
       // 同じカードを引いた時
       if(this.cardlist1[2] == cardId){
         return;
       }
+      if(face == false){
+        return;
+      }
+      this.cCount++;
       // 最初のカードと2枚目のカードで条件分岐
       if(this.cCount % 2 !== 0){
         const NewcardlistFirst = this.cardlist.concat();
@@ -68,50 +69,45 @@ export default {
         this.cardlist1.push(targetIndex); // 1枚目が何番目にあるか保存
         this.cardlist1.push(cardId);      // 同じカードを引いた時用
         this.cardlist1.push(face);        // 1枚目が面にあるか保存
-        this.cardlist1.push(src);        // 1枚目が面にあるか保存
-        this.cardlist1[3] = false;
-        // this.cardlist[cardId].face = false;
-        // console.log(this.cardlist[cardId].face);
+        this.cardlist1.push(src);         // 1枚目が面にあるか保存
+        const Newcardlist = this.cardlist.concat();
+        Newcardlist[targetIndex].src = require('~/assets/0/'+cardId+'.png');
+        Newcardlist[targetIndex].face = false;
       } else {
-        // console.log(this.cardlist1[3]);
         let cardlist2 = num;
         const targetIndex = this.cardlist1[1];
         const NewcardlistSecond = this.cardlist.concat();
         const targetIndex2 = NewcardlistSecond.findIndex(cardlist => cardlist.id === cardId);
         const Newcardlist = this.cardlist.concat();
-        // console.log("1枚目のカードの番号は"+this.cardlist1[0]+"番で、左上から数えて"+targetIndex+"番目");
-        // console.log("2枚目のカードの番号は"+cardlist2+"番で、左上から数えて"+targetIndex2+"番目");
+        Newcardlist[targetIndex2].src = require('~/assets/0/'+cardId+'.png');
+        Newcardlist[targetIndex2].face = false;
         // カードが揃った時と揃わなかった時で条件分岐
         if(cardlist2 == this.cardlist1[0]){
-          // console.log("正解！"+this.cardlist1.length);
+          this.cCount = 0;
           return new Promise((resolve, reject) => {
             setTimeout(() => {
               alert("正解！\n1枚目のカード" + this.cardlist1[0] + "\n2枚目のカード" + cardlist2);
+              Newcardlist[targetIndex].src = require("~/assets/cardFront.png");
+              Newcardlist[targetIndex2].src = require("~/assets/cardFront.png");
               Newcardlist[targetIndex].opa = 0;  // 最初のカードを透明に
               Newcardlist[targetIndex2].opa = 0; // 2枚目のカードを透明に
-            }, 60)
+              console.log(Newcardlist[targetIndex].src);
+              this.cardlist1.length=null; // データを空にする
+            }, 100)
           })
-          // console.log(Newcardlist);
-          this.cardlist1.length=null; // データを空にする
         }else{
-          // this.cardlist1[3] = require('~/assets/cardFront.png');
-          // console.log(Newcardlist);
           const Newcardlist = this.cardlist.concat();
-          console.log(Newcardlist[targetIndex].src);
           Newcardlist[targetIndex].face = true;  // 最初のカードを透明に
           Newcardlist[targetIndex2].face = true; // 2枚目のカードを透明に
-          // Newcardlist[targetIndex].src = require('~/assets/cardFront.png');
-          //  cardList2,this.cardList1[0],require("~/assets/cardFront.png");return new Promise((resolve, reject) => {
+          this.cCount = 0;
           return new Promise((resolve, reject) => {
             setTimeout(() => {
               alert("残念！\n1枚目のカード" + this.cardlist1[0] + "\n2枚目のカード" + cardlist2);
-              this.cardlist[cardId].face = false;
+              Newcardlist[targetIndex].src = require("~/assets/cardFront.png");
+              Newcardlist[targetIndex2].src = require("~/assets/cardFront.png");
               this.cardlist1.length=null; // データを空にする
-            }, 60)
+            }, 100)
           })
-          Newcardlist[targetIndex].opa = 0.5;  // 最初のカードを透明に
-          Newcardlist[targetIndex2].opa = 0.5; // 2枚目のカードを透明に
-          // alert("残念！ 最初のカード" + this.cardlist1[0] + "２枚目のカード" + cardlist2);
         }
       }
     }
